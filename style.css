@@ -7,16 +7,11 @@ body {
 }
 
 .title {
-  color: aquamarine;
-  font-size: 100px;
-  background-color: black;
-  width: 100vw;
-  height: 100vh;
-  max-width: 100%;
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
-  text-align: center;
+  color: rgb(19, 91, 41);
+  position: absolute;
+  left: 30%;
+  top: 1%;
+  font-size: 600%;
 }
 .price_per_item {
   background-color: rgb(251, 214, 214);
