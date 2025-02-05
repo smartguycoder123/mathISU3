@@ -1,0 +1,149 @@
+body {
+  background-image: url(https://images.unsplash.com/photo-1688494930045-328d0f95efe9?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-size: 100vw;
+}
+
+.title {
+  color: aquamarine;
+  font-size: 100px;
+  background-color: black;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  text-align: center;
+}
+.price_per_item {
+  background-color: rgb(251, 214, 214);
+  border: solid;
+  border-color: azure;
+  position: absolute;
+  left: 5%;
+  top: 25%;
+  font-size: 200%;
+  border-radius: 5px;
+  width: 21%;
+  height: 150px;
+  margin-left: 2.3%;
+  margin-top: 1%;
+  margin-bottom: 2%;
+  margin-right: 2%;
+  transition: opacity 0.2s;
+  display: inline;
+}
+
+.price_per_item:hover {
+  opacity: 0.84;
+}
+.price_per_item:active {
+  opacity: 0.7;
+}
+
+.sales_tax_calculator {
+  background-color: rgb(207, 244, 244);
+  border: solid;
+  border-color: azure;
+  position: absolute;
+  left: 37.5%;
+  top: 25%;
+  font-size: 240%;
+  border-radius: 5px;
+  width: 21%;
+  height: 150px;
+  margin-left: 40px;
+  margin-top: 1%;
+  margin-bottom: 2%;
+  margin-right: 2%;
+  transition: opacity 0.2s;
+  display: inline;
+}
+
+.sales_tax_calculator:hover {
+  opacity: 0.84;
+}
+.sales_tax_calculator:active {
+  opacity: 0.7;
+}
+
+.simp_comp_interest_calculator {
+  display: inline;
+  background-color: rgb(195, 247, 205);
+  border: solid;
+  border-color: azure;
+  position: absolute;
+  left: 70%;
+  top: 25%;
+  font-size: 200%;
+  border-radius: 5px;
+  width: 21%;
+  height: 150px;
+  margin-left: 40px;
+  margin-top: 1%;
+  margin-bottom: 2%;
+  margin-right: 2%;
+  transition: opacity 0.2s;
+}
+
+.simp_comp_intrest_calculator:hover {
+  opacity: 0.84;
+}
+.simp_comp_intrest_calculator:active {
+  opacity: 0.7;
+}
+
+.ratio {
+  background-color: rgb(249, 248, 196);
+  border: solid;
+  border-color: azure;
+  position: absolute;
+  left: 5%;
+  top: 61%;
+  font-size: 40px;
+  border-radius: 5px;
+  width: 21%;
+  height: 150px;
+  margin-left: 2.3%;
+  margin-top: 1%;
+  margin-bottom: 2%;
+  margin-right: 2%;
+  transition: opacity 0.2s;
+  display: inline;
+}
+
+.ratio:hover {
+  opacity: 0.84;
+}
+.ratio:active {
+  opacity: 0.7;
+}
+
+.discount_calculator {
+  background-color: rgb(249, 248, 196);
+  border: solid;
+  border-color: azure;
+  position: absolute;
+  left: 37.5%;
+  top: 61%;
+  font-size: 40px;
+  border-radius: 5px;
+  width: 21%;
+  height: 150px;
+  margin-left: 2.3%;
+  margin-top: 1%;
+  margin-bottom: 2%;
+  margin-right: 2%;
+  transition: opacity 0.2s;
+  display: inline;
+}
+
+.discount_calculator:hover {
+  opacity: 0.84;
+}
+.discount_calculator:active {
+  opacity: 0.7;
+}
+
