@@ -149,7 +149,9 @@ body {
 
 /* From Uiverse.io by gharsh11032000 */ 
 .github {
-  position: relative;
+  position: absolute;
+  top: 80%;
+  left: 80%;
   width: 120px;
   height: 40px;
   background-color: #000;
