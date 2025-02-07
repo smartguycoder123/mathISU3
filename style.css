@@ -82,6 +82,7 @@ body {
   margin-bottom: 2%;
   margin-right: 2%;
   transition: opacity 0.2s;
+  display: inline;
 }
 
 .simp_comp_intrest_calculator:hover {
