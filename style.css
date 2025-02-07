@@ -154,8 +154,9 @@ body {
   --offset: 2px;
 
   cursor: pointer;
-  position: relative;
-
+  position: absolute;
+  top: 85%;
+  left: 85%;
   display: flex;
   align-items: center;
   gap: 0.5rem;
