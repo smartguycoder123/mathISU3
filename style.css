@@ -329,11 +329,11 @@
   color: transparent;
 }
 
-/* From Uiverse.io by alexruix */ 
+
 .loader {
-  position: relative;
-  width: 120px;
-  height: 90px;
+  position: absolute;
+  width: 70%;
+  height: 10%;
   margin: 0 auto;
 }
 
