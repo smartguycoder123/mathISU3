@@ -339,7 +339,7 @@
   margin: 0 auto;
 }
 
-.loader:before {
+.load:before {
   content: "";
   position: absolute;
   bottom: 30px;
