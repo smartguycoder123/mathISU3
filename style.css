@@ -339,7 +339,7 @@
   margin: 0 auto;
 }
 .load {
-  position: absolute;
+  position: relative;
   left: 86.67%;
   top: 9%;
 }
