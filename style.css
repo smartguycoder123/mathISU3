@@ -331,9 +331,9 @@
 
 
 .loader {
-  position: absolute;
-  width: 70%;
-  height: 10%;
+  position: relative;
+  width: 120px;
+  height: 90px;
   margin: 0 auto;
 }
 
