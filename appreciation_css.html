@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style_appreciation.css" />
+    <title>Mathisu3</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/regression@2.0.1/dist/regression.min.js"></script>
+</head>
+<body>
+    <a href="index.html">
+        <button class="button">
+            <svg class="svgIcon" viewBox="0 0 384 512">
+            <path
+                d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"
+            ></path>
+            </svg>
+        </button>
+        </a>
+<h1 class="type_of_line"></h1>
+<div class="container">
+    <label id="none-label"><input name="e" type="radio" checked/> None.</label>
+    <label id="linear-label"><input name="e" type="radio" /> Linear regression.</label>
+    <label id="exponential-label"><input name="e" type="radio" /> Exponential regression.</label>
+    <label id="quadratic-label"><input name="e" type="radio" /> Quadratic regression.</label>
+</div>
+  
+<div class="table-container">
+    <table id="coordinateTable">
+        <thead>
+            <tr>
+                <th>X</th>
+                <th>Y</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="number" class="x-coord" step="any"></td>
+                <td><input type="number" class="y-coord" step="any"></td>
+                <td><button class="delete-row">×</button></td>
+            </tr>
+            <tr>
+                <td><input type="number" class="x-coord" step="any"></td>
+                <td><input type="number" class="y-coord" step="any"></td>
+                <td><button class="delete-row">×</button></td>
+            </tr>
+            <tr>
+                <td><input type="number" class="x-coord" step="any"></td>
+                <td><input type="number" class="y-coord" step="any"></td>
+                <td><button class="delete-row">×</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <button id="addRow">+</button>
+    <button id="graphBtn">Graph</button>
+</div>
+
+<canvas id="scatterPlot"></canvas>
+
+<script>
+const table = document.getElementById('coordinateTable');
+const addRowBtn = document.getElementById('addRow');
+const graphBtn = document.getElementById('graphBtn');
+const container = document.querySelector('.container');
+let chart = null;
+
+container.style.display = 'none';
+
+addRowBtn.addEventListener('click', () => {
+    const newRow = table.insertRow(-1);
+    newRow.innerHTML = `
+        <td><input type="number" class="x-coord" step="any"></td>
+        <td><input type="number" class="y-coord" step="any"></td>
+        <td><button class="delete-row">×</button></td>
+    `;
+});
+
+table.addEventListener('click', (e) => {
+    if (e.target.classList.contains('delete-row')) {
+        if (table.rows.length > 4) {
+            e.target.closest('tr').remove();
+        }
+    }
+});
+
+function getCoordinates() {
+    const coords = [];
+    const xInputs = document.querySelectorAll('.x-coord');
+    const yInputs = document.querySelectorAll('.y-coord');
+    
+    for (let i = 0; i < xInputs.length; i++) {
+        const x = parseFloat(xInputs[i].value);
+        const y = parseFloat(yInputs[i].value);
+        if (!isNaN(x) && !isNaN(y)) {
+            coords.push([x, y]);
+        }
+    }
+    return coords;
+}
+
+function createRegressionLine(type, points) {
+    if (type === 'none') return [];
+    
+    let result;
+    let equation = '';
+    switch(type) {
+        case 'linear':
+            result = regression.linear(points);
+            equation = `y = ${result.equation[0].toFixed(2)}x + ${result.equation[1].toFixed(2)}`;
+            break;
+        case 'exponential':
+            result = regression.exponential(points);
+            equation = `y = ${result.equation[0].toFixed(2)}e^(${result.equation[1].toFixed(2)}x)`;
+            break;
+        case 'quadratic':
+            result = regression.polynomial(points, { order: 2 });;
+            const [a, b, c] = result.equation;
+            equation = `y = ${a.toFixed(2)}x² + ${b.toFixed(2)}x + ${c.toFixed(2)}`;
+            break;
+        default:
+            return { points: [], equation: '' };
+    }
+    
+    const minX = Math.min(...points.map(p => p[0]));
+    const maxX = Math.max(...points.map(p => p[0]));
+    const step = (maxX - minX) / 100;
+    
+    const regressionPoints = [];
+    for (let x = minX; x <= maxX; x += step) {
+        regressionPoints.push({x: x, y: result.predict(x)[1]});
+    }
+    return { points: regressionPoints, equation: equation };
+}
+
+function updateChart(regressionType = 'none') {
+    const coords = getCoordinates();
+    if (coords.length < 2) return;
+
+    const regression = createRegressionLine(regressionType, coords);
+    
+    let regressionColor;
+    switch(regressionType) {
+        case 'none':
+            regressionColor = 'rgba(0,0,0,0)';
+            break;
+        case 'linear':
+            regressionColor = '#4CAF50';
+            break;
+        case 'exponential':
+            regressionColor = '#2196F3';
+            break;
+        case 'quadratic':
+            regressionColor = '#9C27B0';
+            break;
+        default:
+            regressionColor = 'rgba(0,0,0,0)';
+    }
+
+    if (chart) chart.destroy();
+    
+    chart = new Chart('scatterPlot', {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Data Points',
+                data: coords.map(coord => ({x: coord[0], y: coord[1]})),
+                backgroundColor: 'rgb(75, 192, 192)'
+            },
+            {
+                label: regressionType === 'none' ? '' : 
+                    `${regressionType.charAt(0).toUpperCase() + regressionType.slice(1)} Regression: ${regression.equation}`,
+                data: regression.points,
+                type: 'line',
+                borderColor: regressionColor,
+                fill: false,
+                showLine: true,
+                borderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    grid: {
+                        color: 'rgba(200, 200, 200, 0.2)'
+                    }
+                },
+                y: {
+                    grid: {
+                        color: 'rgba(200, 200, 200, 0.2)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'white'
+                    }
+                }
+            }
+        }
+    });
+
+    const typeOfLineElement = document.querySelector('.type_of_line');
+    if (coords.length >= 2) {
+        const firstY = coords[0][1];
+        const lastY = coords[coords.length - 1][1];
+        
+        const sortedCoords = [...coords].sort((a, b) => a[0] - b[0]);
+        const overallTrend = sortedCoords[sortedCoords.length - 1][1] - sortedCoords[0][1];
+        
+        if (overallTrend > 0) {
+            typeOfLineElement.textContent = "This is an appreciation pattern";
+            typeOfLineElement.style.color = "#57d3f2";
+        } else if (overallTrend < 0) {
+            typeOfLineElement.textContent = "This is a depreciation pattern";
+            typeOfLineElement.style.color = "#70e683";
+        } else {
+            typeOfLineElement.textContent = "This is a constant pattern";
+            typeOfLineElement.style.color = "#2196F3";
+        }
+    } else {
+        typeOfLineElement.textContent = "";
+    }
+
+    container.style.display = 'grid';
+}
+
+graphBtn.addEventListener('click', () => updateChart());
+
+document.querySelectorAll('.container input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        const labelId = e.target.parentElement.id;
+        let regressionType;
+        
+        switch(labelId) {
+            case 'none-label':
+                regressionType = 'none';
+                break;
+            case 'linear-label':
+                regressionType = 'linear';
+                break;
+            case 'exponential-label':
+                regressionType = 'exponential';
+                break;
+            case 'quadratic-label':
+                regressionType = 'quadratic';
+                break;
+            default:
+                regressionType = 'none';
+        }
+        
+        updateChart(regressionType);
+    });
+});
+</script>
+  
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style_discount.css" />
+    <title>Mathisu3</title>
+  </head>
+  <body>
+    <a href="index.html">
+      <button class="button">
+        <svg class="svgIcon" viewBox="0 0 384 512">
+          <path
+            d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"
+          ></path>
+        </svg>
+      </button>
+    </a>
+
+    <h1 class="prompt">Please enter the price of the item:</h1>
+    
+    <div class="form-control">
+        <input type="text" required="" id="inputField" pattern="[0-9]*\.?[0-9]*" inputmode="decimal"/>
+        <label>
+            <span style="transition-delay: 0ms">E</span
+            ><span style="transition-delay: 50ms">n</span
+            ><span style="transition-delay: 100ms">t</span
+            ><span style="transition-delay: 150ms">e</span
+            ><span style="transition-delay: 200ms">r</span
+            ><span style="transition-delay: 250ms"> </span
+            ><span style="transition-delay: 300ms">v</span
+            ><span style="transition-delay: 350ms">a</span
+            ><span style="transition-delay: 400ms">l</span
+            ><span style="transition-delay: 450ms">u</span
+            ><span style="transition-delay: 500ms">e</span>
+            ><span style="transition-delay: 550ms">:</span>
+        </label>
+    </div>
+
+    <h1 class="output"></h1>
+    <h1 class="total_output"></h1>
+
+    <script>
+        const inputField = document.getElementById('inputField');
+        const promptElement = document.querySelector('.prompt');
+        const outputElement = document.querySelector('.output');
+        const totalOutputElement = document.querySelector('.total_output');
+
+        let step = 1;
+        let price = 0;
+        inputField.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9.]/g, '');
+            if(this.value.split('.').length > 2) {
+                this.value = this.value.replace(/\.+$/, '');
+            }
+        });
+        inputField.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            if(!isNaN(pastedText)) {
+                this.value = pastedText;
+            }
+        });
+
+        inputField.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const value = parseFloat(this.value);
+                
+                if (isNaN(value)) {
+                    promptElement.textContent = 'Please enter a valid number';
+                    return;
+                }
+
+                switch(step) {
+                    case 1:
+                        price = value;
+                        promptElement.textContent = 'What is the discount percent?';
+                        step = 2;
+                        break;
+                        
+                    case 2:
+                        if (value > 100) {
+                            promptElement.textContent = 'Discount cannot be more than 100%';
+                            this.value = '';
+                            return;
+                        }
+                        
+                        const discountPercent = value;
+                        const discountAmount = (price * discountPercent) / 100;
+                        const finalPrice = price - discountAmount;
+                        
+                        outputElement.textContent = `The discount is $${discountAmount.toFixed(2)}`;
+                        totalOutputElement.textContent = `The final price is $${finalPrice.toFixed(2)}`;
+                        
+                        promptElement.textContent = 'Please enter the price of the item:';
+                        step = 1;
+                        break;
+                }
+                
+                this.value = '';
+            }
+        });
+    </script>
+  </body>
+</html>

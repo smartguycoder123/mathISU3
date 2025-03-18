@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style_ratio.css" />
+    <title>Mathisu3</title>
+</head>
+<body>
+    <a href="index.html">
+        <button class="button">
+            <svg class="svgIcon" viewBox="0 0 384 512">
+            <path
+                d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"
+            ></path>
+            </svg>
+        </button>
+    </a>
+
+    <div class="table-container">
+        <table id="creditTable">
+            <tr>
+                <td>Payment History</td>
+                <td><input type="text" id="paymentHistory" min="0" max="100" placeholder="% of payments made on time" class="credit-input" oninput="validateInput(this)"></td>
+            </tr>
+            <tr>
+                <td>Credit Utilization</td>
+                <td><input type="text" id="creditUtilization" min="0" max="100" placeholder="% of credit used" class="credit-input" oninput="validateInput(this)"></td>
+            </tr>
+            <tr>
+                <td>Length of Credit History</td>
+                <td><input type="text" id="creditLength" min="0" max="100" placeholder="Years" class="credit-input" oninput="validateInput(this)"></td>
+            </tr>
+            <tr>
+                <td>Credit Mix</td>
+                <td><input type="text" id="creditMix" min="0" max="100" placeholder="% of diverse credit types" class="credit-input" oninput="validateInput(this)"></td>
+            </tr>
+            <tr>
+                <td>New Credit</td>
+                <td><input type="text" id="newCredit" min="0" max="100" placeholder="% of recent credit inquiries" class="credit-input" oninput="validateInput(this)"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="score-display">
+        <h1 class="output">Credit Score: ---</h1>
+    </div>
+
+    <button class="animated-button">
+        <svg viewBox="0 0 24 24" class="arr-2" xmlns="http://www.w3.org/2000/svg">
+        <path
+            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+        ></path>
+        </svg>
+        <span class="text">Submit.</span>
+        <span class="circle"></span>
+        <svg viewBox="0 0 24 24" class="arr-1" xmlns="http://www.w3.org/2000/svg">
+        <path
+            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+        ></path>
+        </svg>
+    </button>
+    <div id="gauge" data-min="0" data-max="850" data-initial="0"></div>
+    <script>
+    function validateInput(input) {
+        input.value = input.value.replace(/[^0-9.]/g, '');
+        let decimalCount = (input.value.match(/\./g) || []).length;
+        if (decimalCount > 1) {
+            input.value = input.value.slice(0, input.value.lastIndexOf('.'));
+        }
+
+        if (parseFloat(input.value) > parseFloat(input.max)) {
+            input.value = input.max;
+        }
+    }
+    </script>
+    <script>
+    document.querySelector('.animated-button').addEventListener('click', function() {
+
+        const getValue = (id, multiplier) => {
+            const value = parseFloat(document.getElementById(id).value);
+            return isNaN(value) ? 0 : value * multiplier;
+        };
+
+        const paymentHistory = getValue('paymentHistory', 0.35);
+        const utilization = (100 - getValue('creditUtilization', 1)) * 0.30;
+        const length = Math.min(getValue('creditLength', 10), 100) * 0.15;
+        const mix = getValue('creditMix', 0.10);
+        const newCredit = (100 - getValue('newCredit', 1)) * 0.10;
+
+        const baseScore = paymentHistory + utilization + length + mix + newCredit;
+        let score = Math.round((baseScore * 5.5) + 300);
+        score = Math.max(300, Math.min(850, score));
+
+        document.querySelector('.output').textContent = `Credit Score: ${score}`;
+        gauge.set('#gauge', score);
+    });
+    </script>
+    <script src="gauge.js"></script>
+</body>
+</html>

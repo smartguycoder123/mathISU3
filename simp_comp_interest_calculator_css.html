@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style_simp.css" />
+    <title>Mathisu3</title>
+  </head>
+  <body>
+    <a href="index.html">
+      <button class="button">
+        <svg class="svgIcon" viewBox="0 0 384 512">
+          <path
+            d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"
+          ></path>
+        </svg>
+      </button>
+    </a>
+    <div class="form-control">
+      <input
+        type="text"
+        required=""
+        id="inputField"
+        pattern="[0-9]*\.?[0-9]*"
+        inputmode="decimal"
+      />
+      <label>
+        <span style="transition-delay: 0ms">E</span
+        ><span style="transition-delay: 50ms">n</span
+        ><span style="transition-delay: 100ms">t</span
+        ><span style="transition-delay: 150ms">e</span
+        ><span style="transition-delay: 200ms">r</span
+        ><span style="transition-delay: 250ms"> </span
+        ><span style="transition-delay: 300ms">v</span
+        ><span style="transition-delay: 350ms">a</span
+        ><span style="transition-delay: 400ms">l</span
+        ><span style="transition-delay: 450ms">u</span
+        ><span style="transition-delay: 500ms">e</span> ><span
+          style="transition-delay: 550ms"
+          >:</span
+        >
+      </label>
+    </div>
+    <div class="form-control1">
+      <input
+        type="text"
+        required=""
+        id="inputField1"
+        pattern="[0-9]*\.?[0-9]*"
+        inputmode="decimal"
+      />
+      <label>
+        <span style="transition-delay: 0ms">E</span
+        ><span style="transition-delay: 50ms">n</span
+        ><span style="transition-delay: 100ms">t</span
+        ><span style="transition-delay: 150ms">e</span
+        ><span style="transition-delay: 200ms">r</span
+        ><span style="transition-delay: 250ms"> </span
+        ><span style="transition-delay: 300ms">v</span
+        ><span style="transition-delay: 350ms">a</span
+        ><span style="transition-delay: 400ms">l</span
+        ><span style="transition-delay: 450ms">u</span
+        ><span style="transition-delay: 500ms">e</span> ><span
+          style="transition-delay: 550ms"
+          >:</span>
+      </label>
+    </div>
+    <h1 class="prompt">Enter the percent number per annum:</h1>
+    <h1 class="output"></h1>
+    <h1 class="output_total"></h1>
+    <h1 class="prompt1">Enter the percent number per annum:</h1>
+    <h1 class="output1"></h1>
+    <h1 class="output_total1"></h1>
+    <script>
+      const inputField = document.getElementById('inputField');
+      const promptElement = document.querySelector('.prompt');
+      const outputElement = document.querySelector('.output');
+      const outputTotalElement = document.querySelector('.output_total');
+
+      let step = 1;
+      let interestRate = 0;
+      let years = 0;
+      let principal = 0;
+
+      inputField.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+              const value = parseFloat(this.value);
+              
+              if (isNaN(value)) {
+                  promptElement.textContent = 'Please enter a valid number';
+                  return;
+              }
+
+              switch(step) {
+                  case 1:
+                      interestRate = value;
+                      promptElement.textContent = 'Please enter the number of years:';
+                      step = 2;
+                      break;
+                      
+                  case 2:
+                      years = value;
+                      promptElement.textContent = 'What is the amount of money?';
+                      step = 3;
+                      break;
+                      
+                  case 3:
+                      principal = value;
+                      calculateInterest();
+                      break;
+              }
+              
+              this.value = '';
+          }
+      });
+
+      function calculateInterest() {
+          const interest = (principal * (interestRate/100) * years);
+          const total = principal + interest;
+          
+          outputElement.textContent = `The interest you earn is $${interest.toFixed(2)}`;
+          outputTotalElement.textContent = `The total money is $${total.toFixed(2)}`;
+          
+          promptElement.textContent = 'Enter the percent number per annum:';
+          step = 1;
+      }
+      inputField.addEventListener('input', function(e) {
+          this.value = this.value.replace(/[^0-9.]/g, '');
+          if(this.value.split('.').length > 2) {
+              this.value = this.value.replace(/\.+$/, '');
+          }
+      });
+    </script>
+    <script>
+      const inputField1 = document.getElementById('inputField1');
+      const promptElement1 = document.querySelector('.prompt1');
+      const outputElement1 = document.querySelector('.output1');
+      const outputTotalElement1 = document.querySelector('.output_total1');
+
+      let step1 = 1;
+      let interestRate1 = 0;
+      let years1 = 0;
+      let principal1 = 0;
+
+      inputField1.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+              const value = parseFloat(this.value);
+              
+              if (isNaN(value)) {
+                  promptElement1.textContent = 'Please enter a valid number';
+                  return;
+              }
+
+              switch(step1) {
+                  case 1:
+                      interestRate1 = value;
+                      promptElement1.textContent = 'Please enter the number of years:';
+                      step1 = 2;
+                      break;
+                      
+                  case 2:
+                      years1 = value;
+                      promptElement1.textContent = 'What is the amount of money?';
+                      step1 = 3;
+                      break;
+                      
+                  case 3:
+                      principal1 = value;
+                      calculateCompoundInterest();
+                      break;
+              }
+              
+              this.value = '';
+          }
+      });
+
+      function calculateCompoundInterest() {
+          const rate = interestRate1 / 100;
+          const total = principal1 * Math.pow((1 + rate), years1);
+          const interest = total - principal1;
+          
+          outputElement1.textContent = `The compound interest you earn is $${interest.toFixed(2)}`;
+          outputTotalElement1.textContent = `The total money is $${total.toFixed(2)}`;
+          
+          promptElement1.textContent = 'Enter the percent number per annum:';
+          step1 = 1;
+      }
+
+      inputField1.addEventListener('input', function(e) {
+          this.value = this.value.replace(/[^0-9.]/g, '');
+          if(this.value.split('.').length > 2) {
+              this.value = this.value.replace(/\.+$/, '');
+          }
+      });
+    </script>
+  </body>
+  <h1 class="simp_interest">Simple Interest:</h1>
+  <h1 class="comp_interest">Compound Interest:</h1>
+</html>
