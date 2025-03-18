@@ -101,37 +101,69 @@ function getCoordinates() {
 }
 
 function createRegressionLine(type, points) {
-    if (type === 'none') return [];
+    if (type === 'none') return { points: [], equation: '' };
     
     let result;
     let equation = '';
-    switch(type) {
-        case 'linear':
-            result = regression.linear(points);
-            equation = `y = ${result.equation[0].toFixed(2)}x + ${result.equation[1].toFixed(2)}`;
-            break;
-        case 'exponential':
-            result = regression.exponential(points);
-            equation = `y = ${result.equation[0].toFixed(2)}e^(${result.equation[1].toFixed(2)}x)`;
-            break;
-        case 'quadratic':
-            result = regression.polynomial(points, { order: 2 });;
-            const [a, b, c] = result.equation;
-            equation = `y = ${a.toFixed(2)}x² + ${b.toFixed(2)}x + ${c.toFixed(2)}`;
-            break;
-        default:
-            return { points: [], equation: '' };
+    try {
+        switch(type) {
+            case 'linear':
+                result = regression.linear(points);
+                equation = `y = ${result.equation[0].toFixed(2)}x + ${result.equation[1].toFixed(2)}`;
+                break;
+            case 'exponential':
+
+                const validPoints = points.filter(p => p[1] > 0);
+                if (validPoints.length < 2) {
+                    throw new Error('Exponential regression requires at least 2 positive Y values');
+                }
+
+                const logPoints = validPoints.map(p => [p[0], Math.log(p[1])]);
+                const logResult = regression.linear(logPoints);
+
+                const b = logResult.equation[0];
+                const a = Math.exp(logResult.equation[1]);
+                result = {
+                    equation: [a, b],
+                    predict: x => [x, a * Math.exp(b * x)]
+                };
+                equation = `y = ${a.toFixed(2)}e^(${b.toFixed(2)}x)`;
+                break;
+            case 'quadratic':
+                result = regression.polynomial(points, { order: 2, precision: 4 });
+                const [c, d, e] = result.equation;
+                equation = `y = ${c.toFixed(2)}x² + ${d.toFixed(2)}x + ${e.toFixed(2)}`;
+                break;
+            default:
+                return { points: [], equation: '' };
+        }
+        
+        const minX = Math.min(...points.map(p => p[0]));
+        const maxX = Math.max(...points.map(p => p[0]));
+        const step = (maxX - minX) / 100;
+        
+        const regressionPoints = [];
+        for (let x = minX; x <= maxX; x += step) {
+            let y;
+            switch(type) {
+                case 'linear':
+                    y = result.predict(x)[1];
+                    break;
+                case 'exponential':
+                    y = result.predict(x)[1];
+                    break;
+                case 'quadratic':
+                    y = result.predict(x)[1];
+                    break;
+            }
+            regressionPoints.push({ x, y });
+        }
+        
+        return { points: regressionPoints, equation: equation };
+    } catch (error) {
+        console.error('Regression calculation error:', error);
+        return { points: [], equation: 'Error calculating regression' };
     }
-    
-    const minX = Math.min(...points.map(p => p[0]));
-    const maxX = Math.max(...points.map(p => p[0]));
-    const step = (maxX - minX) / 100;
-    
-    const regressionPoints = [];
-    for (let x = minX; x <= maxX; x += step) {
-        regressionPoints.push({x: x, y: result.predict(x)[1]});
-    }
-    return { points: regressionPoints, equation: equation };
 }
 
 function updateChart(regressionType = 'none') {
@@ -158,6 +190,45 @@ function updateChart(regressionType = 'none') {
             regressionColor = 'rgba(0,0,0,0)';
     }
 
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+            x: {
+                type: 'linear',
+                position: 'bottom',
+                grid: {
+                    color: 'rgba(200, 200, 200, 0.2)'
+                },
+                ticks: {
+                    color: 'white'
+                }
+            },
+            y: {
+                type: 'linear',
+                grid: {
+                    color: 'rgba(200, 200, 200, 0.2)'
+                },
+                ticks: {
+                    color: 'white'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                labels: {
+                    color: 'white'
+                }
+            }
+        }
+    };
+
+    if (regressionType === 'exponential') {
+        const yValues = coords.map(coord => coord[1]);
+        chartOptions.scales.y.min = Math.min(...yValues);
+        chartOptions.scales.y.max = Math.max(...yValues);
+    }
+
     if (chart) chart.destroy();
     
     chart = new Chart('scatterPlot', {
@@ -179,30 +250,7 @@ function updateChart(regressionType = 'none') {
                 borderWidth: 3
             }]
         },
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    type: 'linear',
-                    position: 'bottom',
-                    grid: {
-                        color: 'rgba(200, 200, 200, 0.2)'
-                    }
-                },
-                y: {
-                    grid: {
-                        color: 'rgba(200, 200, 200, 0.2)'
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    labels: {
-                        color: 'white'
-                    }
-                }
-            }
-        }
+        options: chartOptions
     });
 
     const typeOfLineElement = document.querySelector('.type_of_line');
